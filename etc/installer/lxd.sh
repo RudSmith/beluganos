@@ -83,6 +83,8 @@ lxd_base() {
 # setup lxd
 #
 init_lxd() {
+    sudo apt install lxc lxd btrfs-tools
+    sudo lxd init
     lxd_init
     lxd_network
     lxd_image

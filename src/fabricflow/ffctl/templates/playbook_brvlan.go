@@ -23,6 +23,8 @@ import (
 	"text/template"
 )
 
+const playbookIfnamePrefix = "eth"
+
 const playbookBrVlanYaml = `---
 
 network:

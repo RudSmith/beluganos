@@ -17,17 +17,20 @@
 # limitations under the License.
 
 beluganos_install() {
+    sudo apt install snapd
+    sudo snap install go --classic --channel=1.16
     OPTS="--with-opennsl=$BEL_ONSL_ENABLE" ./bootstrap.sh
     if [ "${ENABLE_VIRTUALENV}" = "yes" ]; then
-        make release
+        sudo GO111MODULE=auto make release
     else
-        make install
-        make fflow-install
-        sudo make fibc-install
+        sudo GO111MODULE=auto make install
+        sudo GO111MODULE=auto make fflow-install
+        sudo GO111MODULE=auto make fibc-install
     fi
 }
 
 netconf_install() {
+    sudo dhclient
     if [ "${BEL_NC_ENABLE}" != "yes" ]; then
         return
     fi

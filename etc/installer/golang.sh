@@ -37,6 +37,9 @@ gopkg_install() {
         echo "go get ${PKG}"
         go get -u ${PKG} || { echo "gopkg_install error."; exit 1; }
     done
+
+    sudo ./moveRepositories.sh
+    sudo ./makeFix.sh
 }
 
 #
@@ -60,7 +63,7 @@ protoc_install() {
 netlink_patch() {
     cp ./etc/netlink/netlink.patch /tmp/
 
-    pushd ~/go/src/github.com/vishvananda/netlink/
+    pushd ~/go/src/github.com/vishvananda/netlink
     patch -p1 < /tmp/netlink.patch
     go install || { echo "netlink_patch/install error."; exit 1; }
     popd
@@ -78,7 +81,9 @@ gobgpv1_upgrade() {
     cp ./etc/gobgp/gobgp-influxdata-v1.33.patch /tmp/gobgp-influxdata-v1.33.patch
     cp ./etc/gobgp/gobgp-uuid-pkg-v1.33.patch /tmp/gobgp-uuid-pkg-v1.33.patch
 
-    pushd ~/go/src/github.com/osrg/gobgp
+    pushd ~/go/pkg/mod/github.com/osrg/gobgp
+#    pushd ~/go/pkg/mod/github.com/osrg/gobgp@v0.0.0-20190127132841-1f4a12d06516
+
 
     # change to specific version.
     git checkout -B ${GOBGP_VER} ${GOBGP_VER}
@@ -125,6 +130,6 @@ snmplib_patch() {
 
     pushd ~/go/src/github.com/PromonLogicalis/asn1
     patch -p1 < /tmp/romonLogicalis-asn1.patch
-    go install || { echo "snmplib_patch/install error."; exit 1; }
+    GO111MODULE=auto go install || { echo "snmplib_patch/install error."; exit 1; }
     popd
 }

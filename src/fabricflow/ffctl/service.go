@@ -18,10 +18,11 @@
 package main
 
 import (
+	"fabricflow/ffctl/fflib"
 	"fmt"
-	"sort"
-
 	"github.com/spf13/cobra"
+	"os"
+	"sort"
 )
 
 const (
@@ -55,17 +56,17 @@ func (c *ServiceCmd) serviceNames(reverse bool) []string {
 
 func (c *ServiceCmd) status() error {
 	for _, name := range c.serviceNames(false) {
-		execAndOutput("systemctl", "status", "--no-pager", name)
+		fflib.ExecAndOutput(os.Stdout, "systemctl", "status", "--no-pager", name)
 	}
 
-	execAndOutput("lxc", "list")
+	fflib.ExecAndOutput(os.Stdout, "lxc", "list")
 
 	return nil
 }
 
 func (c *ServiceCmd) start() error {
 	for _, name := range c.serviceNames(false) {
-		if err := execAndOutput("sudo", "systemctl", "start", name); err != nil {
+		if err := fflib.ExecAndOutput(os.Stdout, "sudo", "systemctl", "start", name); err != nil {
 			return err
 		}
 	}
@@ -74,7 +75,7 @@ func (c *ServiceCmd) start() error {
 
 func (c *ServiceCmd) stop() error {
 	for _, name := range c.serviceNames(true) {
-		if err := execAndOutput("sudo", "systemctl", "stop", name); err != nil {
+		if err := fflib.ExecAndOutput(os.Stdout, "sudo", "systemctl", "stop", name); err != nil {
 			return err
 		}
 	}
@@ -103,7 +104,7 @@ func serviceCmd() *cobra.Command {
 					return fmt.Errorf("service not specified.")
 				}
 
-				return execAndOutput("sudo", "systemctl", "start", args[0])
+				return fflib.ExecAndOutput(os.Stdout, "sudo", "systemctl", "start", args[0])
 			},
 		},
 	))
@@ -122,7 +123,7 @@ func serviceCmd() *cobra.Command {
 					return fmt.Errorf("service not specified.")
 				}
 
-				return execAndOutput("sudo", "systemctl", "stop", args[0])
+				return fflib.ExecAndOutput(os.Stdout, "sudo", "systemctl", "stop", args[0])
 			},
 		},
 	))
@@ -142,7 +143,7 @@ func serviceCmd() *cobra.Command {
 					return fmt.Errorf("service not specified.")
 				}
 
-				execAndOutput("systemctl", "status", args[0])
+				fflib.ExecAndOutput(os.Stdout, "systemctl", "status", args[0])
 				return nil
 			},
 		},
@@ -154,7 +155,7 @@ func serviceCmd() *cobra.Command {
 			Short: "enable service",
 			Args:  cobra.ExactArgs(1),
 			RunE: func(cmd *cobra.Command, args []string) error {
-				return execAndOutput("sudo", "systemctl", "enable", args[0])
+				return fflib.ExecAndOutput(os.Stdout, "sudo", "systemctl", "enable", args[0])
 			},
 		},
 	))
@@ -165,7 +166,7 @@ func serviceCmd() *cobra.Command {
 			Short: "disable service",
 			Args:  cobra.ExactArgs(1),
 			RunE: func(cmd *cobra.Command, args []string) error {
-				return execAndOutput("sudo", "systemctl", "disable", args[0])
+				return fflib.ExecAndOutput(os.Stdout, "sudo", "systemctl", "disable", args[0])
 			},
 		},
 	))
